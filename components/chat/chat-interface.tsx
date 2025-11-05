@@ -367,16 +367,20 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full">
-            <Bot className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="flex items-center justify-center">
+            <img
+              src="/polypuff.svg"
+              alt="Polypuff"
+              className="w-10 h-10 object-contain"
+            />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Thirdweb AI Assistant
+            <h1
+              className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+              style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+            >
+              Polypuff
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Ask me anything about blockchain, tokens, or smart contracts
-            </p>
           </div>
         </div>
         <div className="flex-shrink-0">
