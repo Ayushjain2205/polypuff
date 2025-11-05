@@ -392,13 +392,20 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="text-center py-12">
-            <Bot className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-              Welcome to Thirdweb AI
+            <img
+              src="/polypuff.svg"
+              alt="Polypuff"
+              className="w-24 h-24 object-contain mx-auto mb-4 hover:animate-bounce"
+            />
+            <h3
+              className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2"
+              style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+            >
+              Welcome to Polypuff
             </h3>
             <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-              Start a conversation by asking about blockchain development, token
-              operations, smart contracts, or any Web3-related questions.
+              Start a conversation by asking about your wallet, transactions, or
+              any other questions you have about Polygon.
             </p>
           </div>
         )}
