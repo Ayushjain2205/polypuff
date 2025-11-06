@@ -62,9 +62,15 @@ interface ImageEvent {
 
 interface ChatInterfaceProps {
   className?: string;
+  triggerPrompt?: string | null;
+  onPromptTriggered?: () => void;
 }
 
-export function ChatInterface({ className }: ChatInterfaceProps) {
+export function ChatInterface({
+  className,
+  triggerPrompt,
+  onPromptTriggered,
+}: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +79,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
   const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lastTriggeredPromptRef = useRef<string | null>(null);
 
   // Get the connected wallet address
   const activeAccount = useActiveAccount();
@@ -114,6 +121,32 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     scrollToBottom();
   }, [messages]);
 
+  // Handle external prompt triggers
+  useEffect(() => {
+    if (
+      triggerPrompt &&
+      triggerPrompt !== lastTriggeredPromptRef.current &&
+      !isLoading
+    ) {
+      // Extract the actual prompt (remove the timestamp suffix if present)
+      const actualPrompt = triggerPrompt.replace(/\s\[\d+\]$/, "");
+      lastTriggeredPromptRef.current = triggerPrompt;
+      // Set input and submit
+      setInput(actualPrompt);
+      // Use setTimeout to ensure state is updated before submission
+      setTimeout(() => {
+        handleSubmitForPrompt(actualPrompt);
+        onPromptTriggered?.();
+      }, 0);
+    }
+
+    // Reset the ref when triggerPrompt is cleared to allow re-triggering
+    if (!triggerPrompt) {
+      lastTriggeredPromptRef.current = null;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerPrompt, isLoading]);
+
   // Clear thinking indicator when messages update with content
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
@@ -129,14 +162,13 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     }
   }, [messages, isThinking]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const handleSubmitForPrompt = async (prompt: string) => {
+    if (!prompt.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content: prompt.trim(),
       timestamp: new Date(),
       status: "sent",
     };
@@ -375,6 +407,12 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    await handleSubmitForPrompt(input);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
