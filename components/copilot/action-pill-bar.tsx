@@ -89,8 +89,8 @@ export function ActionPillBar({
                 "flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all duration-150",
                 "hover:opacity-80 active:opacity-70",
                 isActive
-                  ? "bg-blue-600 text-white dark:bg-blue-500"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-purple-600 text-white dark:bg-purple-500"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-300 dark:hover:border-purple-700 border border-transparent"
               )}
             >
               <span className={cn("w-3 h-3", isActive ? "text-white" : "")}>

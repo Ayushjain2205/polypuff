@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, AlertCircle } from "lucide-react";
+import { Send, User, AlertCircle } from "lucide-react";
 import { stream } from "fetch-event-stream";
 import { Streamdown } from "streamdown";
 import {
@@ -474,18 +474,22 @@ export function ChatInterface({
             }`}
           >
             {message.role === "assistant" && (
-              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex-shrink-0">
-                <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800">
+                <img
+                  src="/polypuff.svg"
+                  alt="Polypuff"
+                  className="w-5 h-5 object-contain"
+                />
               </div>
             )}
 
             <div
               className={`max-w-[70%] rounded-lg px-4 py-2 ${
                 message.role === "user"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 dark:bg-purple-500 text-white"
                   : message.status === "error"
                   ? "bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 border border-red-200 dark:border-red-800"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  : "bg-purple-50 dark:bg-purple-900/20 text-gray-900 dark:text-gray-100 border border-purple-100 dark:border-purple-800"
               }`}
             >
               {message.content && <Streamdown>{message.content}</Streamdown>}
@@ -515,11 +519,11 @@ export function ChatInterface({
                   {message.actions.map((action, index) => (
                     <div
                       key={index}
-                      className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3"
+                      className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3"
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <AlertCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        <AlertCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
                           {action.type === "sign_transaction" &&
                             "Transaction Ready to Sign"}
                           {action.type === "sign_swap" && "Swap Ready to Sign"}
@@ -529,7 +533,7 @@ export function ChatInterface({
                       </div>
 
                       {action.type === "sign_transaction" && (
-                        <div className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                        <div className="text-xs text-purple-800 dark:text-purple-200 space-y-1">
                           <div>
                             <strong>To:</strong>{" "}
                             {(action.data as TransactionActionData).to}
@@ -558,7 +562,7 @@ export function ChatInterface({
                       )}
 
                       {action.type === "sign_swap" && (
-                        <div className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
+                        <div className="text-xs text-purple-800 dark:text-purple-200 space-y-1">
                           <div>
                             <strong>Amount:</strong>{" "}
                             {(action.data as SwapActionData).intent.amount}
@@ -588,7 +592,7 @@ export function ChatInterface({
                       )}
 
                       {action.type === "monitor_transaction" && (
-                        <div className="text-xs text-blue-800 dark:text-blue-200">
+                        <div className="text-xs text-purple-800 dark:text-purple-200">
                           <div>
                             <strong>Transaction ID:</strong>{" "}
                             {(action.data as MonitorActionData).transaction_id}
@@ -605,7 +609,7 @@ export function ChatInterface({
                           }
                           onTransactionConfirmed={handleTransactionSuccess}
                           onError={handleTransactionError}
-                          className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          className="mt-2 px-3 py-1 bg-purple-600 dark:bg-purple-500 text-white text-xs rounded hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors"
                         >
                           Confirm Transaction
                         </TransactionButton>
@@ -618,12 +622,12 @@ export function ChatInterface({
                           }
                           onTransactionConfirmed={handleTransactionSuccess}
                           onError={handleTransactionError}
-                          className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          className="mt-2 px-3 py-1 bg-purple-600 dark:bg-purple-500 text-white text-xs rounded hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors"
                         >
                           Confirm Swap
                         </TransactionButton>
                       ) : (
-                        <button className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
+                        <button className="mt-2 px-3 py-1 bg-purple-600 dark:bg-purple-500 text-white text-xs rounded hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors">
                           View Transaction
                         </button>
                       )}
@@ -635,7 +639,7 @@ export function ChatInterface({
               <div className="flex items-center gap-2 text-xs opacity-70 mt-1">
                 <span>{message.timestamp.toLocaleTimeString()}</span>
                 {message.status === "sending" && (
-                  <span className="text-blue-500">Sending...</span>
+                  <span className="text-purple-500">Sending...</span>
                 )}
                 {message.status === "error" && (
                   <span className="text-red-500">Error</span>
@@ -654,23 +658,27 @@ export function ChatInterface({
         {/* Thinking indicator */}
         {isThinking === true && thinkingMessage && (
           <div className="flex gap-3 justify-start">
-            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex-shrink-0">
-              <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800">
+              <img
+                src="/polypuff.svg"
+                alt="Polypuff"
+                className="w-5 h-5 object-contain"
+              />
             </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-2 max-w-[70%]">
+            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg px-4 py-2 max-w-[70%]">
               <div className="flex items-center gap-2">
                 <div className="flex space-x-1">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"></div>
                   <div
-                    className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"
+                    className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"
                     style={{ animationDelay: "0.2s" }}
                   ></div>
                   <div
-                    className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"
+                    className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"
                     style={{ animationDelay: "0.4s" }}
                   ></div>
                 </div>
-                <span className="text-sm text-blue-700 dark:text-blue-300 italic">
+                <span className="text-sm text-purple-700 dark:text-purple-300 italic">
                   {thinkingMessage}
                 </span>
               </div>
@@ -681,8 +689,12 @@ export function ChatInterface({
         {/* Loading indicator (only when not thinking) */}
         {isLoading && !isThinking && (
           <div className="flex gap-3 justify-start">
-            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex-shrink-0">
-              <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800">
+              <img
+                src="/polypuff.svg"
+                alt="Polypuff"
+                className="w-5 h-5 object-contain"
+              />
             </div>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
               <div className="flex space-x-1">
@@ -713,7 +725,7 @@ export function ChatInterface({
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask me anything about Web3, blockchain, or smart contracts..."
-              className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
+              className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
               rows={1}
               style={{ minHeight: "48px", maxHeight: "120px" }}
               disabled={isLoading}
@@ -721,7 +733,7 @@ export function ChatInterface({
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Send className="w-4 h-4" />
             </button>
