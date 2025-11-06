@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, AlertCircle, Image as ImageIcon } from "lucide-react";
+import { Send, Bot, User, AlertCircle } from "lucide-react";
 import { stream } from "fetch-event-stream";
 import { Streamdown } from "streamdown";
 import {
@@ -24,9 +24,33 @@ interface Message {
   status?: "sending" | "sent" | "error";
 }
 
+interface TransactionActionData {
+  to: string;
+  value?: string;
+  chain_id: number;
+  function?: string;
+  data?: string;
+}
+
+interface SwapActionData {
+  intent: {
+    amount: string;
+    origin_token_address: string;
+    destination_token_address: string;
+    destination_chain_id: number;
+  };
+  transaction: TransactionActionData;
+}
+
+interface MonitorActionData {
+  transaction_id: string;
+}
+
+type ActionData = TransactionActionData | SwapActionData | MonitorActionData;
+
 interface ActionEvent {
   type: "sign_transaction" | "sign_swap" | "monitor_transaction";
-  data: any;
+  data: ActionData;
   request_id: string;
   session_id: string;
 }
@@ -46,7 +70,6 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [currentRequestId, setCurrentRequestId] = useState<string | null>(null);
   const [thinkingMessage, setThinkingMessage] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -59,24 +82,27 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
   const activeChain = useActiveWalletChain();
 
   // Transaction preparation function
-  const prepareTransactionFromAction = (actionData: any) => {
+  const prepareTransactionFromAction = (actionData: TransactionActionData) => {
     return prepareTransaction({
       client,
       chain: defineChain(actionData.chain_id),
       to: actionData.to,
       value: BigInt(actionData.value || "0"),
-      data: actionData.data,
+      data: actionData.data as `0x${string}` | undefined,
     });
   };
 
   // Transaction success handler
-  const handleTransactionSuccess = (receipt: any) => {
+  const handleTransactionSuccess = (receipt: {
+    transactionHash: string;
+    [key: string]: unknown;
+  }) => {
     console.log("Transaction confirmed:", receipt);
     // You can add additional success handling here, like updating UI or showing notifications
   };
 
   // Transaction error handler
-  const handleTransactionError = (error: any) => {
+  const handleTransactionError = (error: Error) => {
     console.error("Transaction failed:", error);
     // You can add additional error handling here, like showing error notifications
   };
@@ -181,9 +207,6 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
               // Handle init event (session id and request id)
               if (parsedEventData.session_id) {
                 setSessionId(parsedEventData.session_id);
-              }
-              if (parsedEventData.request_id) {
-                setCurrentRequestId(parsedEventData.request_id);
               }
               break;
             }
@@ -355,10 +378,30 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as any);
+      const form = e.currentTarget.form;
+      if (form) {
+        const syntheticEvent = {
+          preventDefault: () => {},
+          stopPropagation: () => {},
+          nativeEvent: e.nativeEvent,
+          currentTarget: form,
+          target: form,
+          bubbles: true,
+          cancelable: true,
+          defaultPrevented: false,
+          eventPhase: 0,
+          isTrusted: false,
+          timeStamp: Date.now(),
+          type: "submit",
+          isDefaultPrevented: () => false,
+          isPropagationStopped: () => false,
+          persist: () => {},
+        } as unknown as React.FormEvent<HTMLFormElement>;
+        handleSubmit(syntheticEvent);
+      }
     }
   };
 
@@ -475,20 +518,27 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
                       {action.type === "sign_transaction" && (
                         <div className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
                           <div>
-                            <strong>To:</strong> {action.data.to}
+                            <strong>To:</strong>{" "}
+                            {(action.data as TransactionActionData).to}
                           </div>
                           <div>
                             <strong>Value:</strong>{" "}
-                            {action.data.value
-                              ? `${Number(action.data.value) / 1e18} ETH`
+                            {(action.data as TransactionActionData).value
+                              ? `${
+                                  Number(
+                                    (action.data as TransactionActionData).value
+                                  ) / 1e18
+                                } ETH`
                               : "0 ETH"}
                           </div>
                           <div>
-                            <strong>Chain ID:</strong> {action.data.chain_id}
+                            <strong>Chain ID:</strong>{" "}
+                            {(action.data as TransactionActionData).chain_id}
                           </div>
-                          {action.data.function && (
+                          {(action.data as TransactionActionData).function && (
                             <div>
-                              <strong>Function:</strong> {action.data.function}
+                              <strong>Function:</strong>{" "}
+                              {(action.data as TransactionActionData).function}
                             </div>
                           )}
                         </div>
@@ -497,19 +547,29 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
                       {action.type === "sign_swap" && (
                         <div className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
                           <div>
-                            <strong>Amount:</strong> {action.data.intent.amount}
+                            <strong>Amount:</strong>{" "}
+                            {(action.data as SwapActionData).intent.amount}
                           </div>
                           <div>
                             <strong>From:</strong>
-                            {action.data.intent.origin_token_address}
+                            {
+                              (action.data as SwapActionData).intent
+                                .origin_token_address
+                            }
                           </div>
                           <div>
                             <strong>To:</strong>
-                            {action.data.intent.destination_token_address}
+                            {
+                              (action.data as SwapActionData).intent
+                                .destination_token_address
+                            }
                           </div>
                           <div>
                             <strong>Chain:</strong>{" "}
-                            {action.data.intent.destination_chain_id}
+                            {
+                              (action.data as SwapActionData).intent
+                                .destination_chain_id
+                            }
                           </div>
                         </div>
                       )}
@@ -518,7 +578,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
                         <div className="text-xs text-blue-800 dark:text-blue-200">
                           <div>
                             <strong>Transaction ID:</strong>{" "}
-                            {action.data.transaction_id}
+                            {(action.data as MonitorActionData).transaction_id}
                           </div>
                         </div>
                       )}
@@ -526,7 +586,9 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
                       {action.type === "sign_transaction" ? (
                         <TransactionButton
                           transaction={() =>
-                            prepareTransactionFromAction(action.data)
+                            prepareTransactionFromAction(
+                              action.data as TransactionActionData
+                            )
                           }
                           onTransactionConfirmed={handleTransactionSuccess}
                           onError={handleTransactionError}
@@ -538,7 +600,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
                         <TransactionButton
                           transaction={() =>
                             prepareTransactionFromAction(
-                              action.data.transaction
+                              (action.data as SwapActionData).transaction
                             )
                           }
                           onTransactionConfirmed={handleTransactionSuccess}
