@@ -474,11 +474,11 @@ export function ChatInterface({
             }`}
           >
             {message.role === "assistant" && (
-              <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 bg-white ">
                 <img
                   src="/polypuff.svg"
                   alt="Polypuff"
-                  className="w-5 h-5 object-contain"
+                  className="w-8 h-8 object-contain"
                 />
               </div>
             )}
