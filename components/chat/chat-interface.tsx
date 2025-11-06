@@ -5,14 +5,13 @@ import { Send, Bot, User, AlertCircle } from "lucide-react";
 import { stream } from "fetch-event-stream";
 import { Streamdown } from "streamdown";
 import {
-  ConnectButton,
   useActiveAccount,
   TransactionButton,
   useActiveWalletChain,
 } from "thirdweb/react";
 import { client } from "@/components/providers/thirdweb-provider";
 import { prepareTransaction } from "thirdweb";
-import { defineChain, polygon } from "thirdweb/chains";
+import { defineChain } from "thirdweb/chains";
 
 interface Message {
   id: string;
@@ -407,30 +406,6 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
 
   return (
     <div className={`flex flex-col h-full max-w-4xl mx-auto ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center">
-            <img
-              src="/polypuff.svg"
-              alt="Polypuff"
-              className="w-10 h-10 object-contain"
-            />
-          </div>
-          <div>
-            <h1
-              className="text-lg font-semibold text-gray-900 dark:text-gray-100"
-              style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
-            >
-              Polypuff
-            </h1>
-          </div>
-        </div>
-        <div className="flex-shrink-0">
-          <ConnectButton client={client} chain={polygon} />
-        </div>
-      </div>
-
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (

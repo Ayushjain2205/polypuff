@@ -1,4 +1,4 @@
-export default function Home() {
+export default function CopilotPage() {
   return (
     <div className="h-full bg-white dark:bg-gray-900">
       <div className="max-w-4xl mx-auto h-full p-8">
