@@ -836,46 +836,76 @@ const Badge = ({ className, ...props }: BadgeProps) => (
 );
 
 const SkeletonBlock = ({ className }: { className?: string }) => (
-  <div className={cn("animate-pulse rounded-md bg-slate-200", className)} />
+  <div
+    className={cn(
+      "relative overflow-hidden rounded-md bg-slate-200/80 animate-pulse",
+      className
+    )}
+  >
+    <span className="absolute inset-0 -translate-x-full animate-[shimmer_1.6s_linear_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+  </div>
 );
 
 const CopilotSkeleton = () => (
-  <div className="flex min-h-screen items-start justify-center bg-white px-4 pb-10 pt-12">
-    <div className="mx-auto w-full max-w-sm space-y-6">
-      <div className="relative" style={{ height: "580px" }}>
-        <div className="pointer-events-none absolute inset-0 translate-y-12 scale-90 rounded-[32px] border border-slate-200/60 bg-slate-100 shadow-sm" />
-        <div className="pointer-events-none absolute inset-0 translate-y-6 scale-95 rounded-[32px] border border-slate-200/70 bg-white shadow-md" />
-        <div className="absolute inset-0 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl">
-          <div className="flex h-full flex-col">
-            <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-t-[32px] bg-gradient-to-br from-slate-100 to-slate-200">
-              <SkeletonBlock className="h-32 w-32 rounded-full bg-white/80" />
-              <div className="w-full space-y-2 px-12 text-center">
-                <SkeletonBlock className="mx-auto h-4 w-24 bg-white/80" />
-                <SkeletonBlock className="mx-auto h-6 w-32 bg-white/70" />
+  <>
+    <div className="flex min-h-screen items-start justify-center bg-white px-4 pb-10 pt-12">
+      <div className="mx-auto w-full max-w-sm space-y-6">
+        <div className="relative" style={{ height: "580px" }}>
+          <div className="pointer-events-none absolute inset-0 translate-y-12 scale-90 rounded-[32px] border border-slate-200/60 bg-slate-100 shadow-sm" />
+          <div className="pointer-events-none absolute inset-0 translate-y-6 scale-95 rounded-[32px] border border-slate-200/70 bg-white shadow-md" />
+          <div className="absolute inset-0 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-xl">
+            <div className="flex h-full flex-col">
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-t-[32px] bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 animate-[gradientShift_6s_ease-in-out_infinite]">
+                <SkeletonBlock className="h-32 w-32 rounded-full bg-white/80" />
+                <div className="w-full space-y-2 px-12 text-center">
+                  <SkeletonBlock className="mx-auto h-4 w-24 bg-white/80" />
+                  <SkeletonBlock className="mx-auto h-6 w-32 bg-white/70" />
+                </div>
               </div>
-            </div>
-            <div className="space-y-4 rounded-b-[32px] bg-white px-6 py-6">
-              <div className="grid grid-cols-2 gap-4">
-                <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
-                <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
-                <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
-                <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
+              <div className="space-y-4 rounded-b-[32px] bg-white px-6 py-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
+                  <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
+                  <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
+                  <SkeletonBlock className="h-24 rounded-2xl bg-slate-100" />
+                </div>
+                <SkeletonBlock className="h-16 rounded-2xl bg-slate-100" />
+                <SkeletonBlock className="h-32 rounded-2xl bg-slate-100" />
               </div>
-              <SkeletonBlock className="h-16 rounded-2xl bg-slate-100" />
-              <SkeletonBlock className="h-32 rounded-2xl bg-slate-100" />
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center justify-center gap-3 md:gap-6">
-        <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
-        <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
-        <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
-        <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
+        <div className="flex items-center justify-center gap-3 md:gap-6">
+          <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
+          <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
+          <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
+          <SkeletonBlock className="h-14 w-14 rounded-full bg-slate-200 md:h-20 md:w-20" />
+        </div>
       </div>
     </div>
-  </div>
+    <style jsx global>{`
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+    `}</style>
+  </>
 );
 
 const CircleLoader = ({ size = 48 }: { size?: number }) => (
