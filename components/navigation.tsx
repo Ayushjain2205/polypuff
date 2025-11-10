@@ -13,7 +13,7 @@ export function Navigation() {
   const activeChain = useActiveWalletChain();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isCopilotActive = pathname === "/" || pathname === "/copilot";
+  const isCopilotActive = pathname === "/copilot";
   const isChatActive = pathname === "/chat";
 
   return (
@@ -43,7 +43,7 @@ export function Navigation() {
         {/* Navigation Links - Centered (Desktop) */}
         <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center gap-6">
           <Link
-            href="/"
+            href="/copilot"
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               isCopilotActive
                 ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 font-semibold"
@@ -90,7 +90,7 @@ export function Navigation() {
         <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto p-4 space-y-3">
             <Link
-              href="/"
+              href="/copilot"
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                 isCopilotActive
