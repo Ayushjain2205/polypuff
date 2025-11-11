@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { SideshiftApiError, sideshiftFetch } from "@/lib/sideshift";
 
@@ -7,10 +7,10 @@ interface RouteParams {
 }
 
 export async function GET(
-  _request: Request,
-  { params }: { params: RouteParams }
+  _request: NextRequest,
+  context: { params: Promise<RouteParams> }
 ) {
-  const { shiftId } = params;
+  const { shiftId } = await context.params;
 
   if (!shiftId || typeof shiftId !== "string") {
     return NextResponse.json(
